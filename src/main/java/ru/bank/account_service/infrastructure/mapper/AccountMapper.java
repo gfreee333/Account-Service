@@ -3,6 +3,7 @@ package ru.bank.account_service.infrastructure.mapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import ru.bank.account_service.model.dto.request.RegistrationRequestDto;
+import ru.bank.account_service.model.dto.response.AccountInformation;
 import ru.bank.account_service.model.entity.Account;
 
 @Mapper(componentModel = "spring")
@@ -16,5 +17,12 @@ public interface AccountMapper {
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updateAt", ignore = true)
     Account registrationToEntity(RegistrationRequestDto request);
+
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "userId", ignore = true)
+    @Mapping(target = "dailyLimit", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "updateAt", ignore = true)
+    AccountInformation toAccountInformation(Account account);
 
 }
