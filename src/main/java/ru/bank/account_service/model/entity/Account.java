@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import ru.bank.account_service.model.enums.AccountStatus;
 import ru.bank.account_service.model.enums.AccountType;
 
@@ -26,7 +28,7 @@ public class Account {
     private UUID userId;
     @NotNull
     @Column(unique = true)
-    private UUID accountNumber;
+    private String accountNumber;
     @Enumerated(EnumType.STRING)
     private AccountType accountType;
     @Enumerated(EnumType.STRING)
@@ -34,10 +36,11 @@ public class Account {
     private AccountStatus accountStatus = AccountStatus.ACTIVE;
     @NotNull
     private BigDecimal balance = BigDecimal.ZERO;
-    private BigDecimal dailyLimit = BigDecimal.valueOf(100_000);
+    private BigDecimal dailyLimit;
     private BigDecimal creditLimit;
-    @NotNull
+    @CreationTimestamp
     private LocalDateTime createdAt;
+    @UpdateTimestamp
     private LocalDateTime updatedAt;
 
 }
