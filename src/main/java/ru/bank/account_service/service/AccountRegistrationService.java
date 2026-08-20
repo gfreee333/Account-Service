@@ -11,13 +11,16 @@ import ru.bank.account_service.exception.custom.UserBlockedInSystemException;
 import ru.bank.account_service.exception.custom.UserNotFoundException;
 import ru.bank.account_service.infrastructure.feign.AuthServiceFeignClient;
 import ru.bank.account_service.infrastructure.feign.UserInformation;
+import ru.bank.account_service.infrastructure.kafka.OutboxEvent;
 import ru.bank.account_service.infrastructure.mapper.AccountMapper;
 import ru.bank.account_service.model.dto.request.RegistrationRequestDto;
 import ru.bank.account_service.model.dto.response.RegistrationResponseDto;
 import ru.bank.account_service.model.entity.Account;
+import ru.bank.account_service.model.enums.OutboxEventType;
 import ru.bank.account_service.model.enums.Role;
 import ru.bank.account_service.repository.AccountRepository;
 import ru.bank.account_service.infrastructure.util.AccountNumberGenerated;
+import ru.bank.outbox_library.store.OutboxEventStore;
 
 import java.util.UUID;
 
@@ -28,6 +31,7 @@ public class AccountRegistrationService {
 
     private final AccountRepository accountRepository;
     private final AccountMapper accountMapper;
+    private final OutboxEventStore eventStore;
     private final AuthServiceFeignClient authServiceClient;
 
     @Transactional
@@ -47,7 +51,10 @@ public class AccountRegistrationService {
             account.setAccountNumber(AccountNumberGenerated.generatedAccountNumber());
             account.setUserId(targetId);
             accountRepository.save(account);
-            // Сюда добавить логику для отправки оповещения в Kafka
+            OutboxEvent event = OutboxEvent.eventGenerated(
+                    OutboxEventType.ACCOUNT_REGISTRATION_EVENT
+                    ,userInformation);
+            eventStore.save(event, targetId);
             return new RegistrationResponseDto("Успешная регистрация счета для пользователя: " + targetId);
         } catch (FeignException.NotFound ex){
             log.warn("Пользователь с данным id: {} не найден", targetId);

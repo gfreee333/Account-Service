@@ -11,9 +11,4 @@ public enum Role {
         return this.equals(ADMIN);
     }
 
-    public boolean isUser(){
-        return this.equals(USER);
-    }
-
-
 }
