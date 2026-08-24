@@ -21,10 +21,10 @@ public class OutboxEventHelper {
     private final AuthServiceFeignClient authServiceClient;
     private final OutboxEventStore eventStore;
 
-    public void saveOutboxEvent(UUID targetId, OutboxEventType type){
+    public void saveOutboxEvent(UUID targetId, OutboxEventType type, String accountNumber){
         try {
             UserInformation information = authServiceClient.getUserById(targetId);
-            OutboxEvent event = OutboxEvent.eventGenerated(type, information);
+            OutboxEvent event = OutboxEvent.eventGenerated(type, information, accountNumber);
             eventStore.save(event, targetId);
         } catch (FeignException.NotFound ex) {
             log.warn("Пользователь с данным id: {} не найден", targetId);

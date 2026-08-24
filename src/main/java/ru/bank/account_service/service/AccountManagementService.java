@@ -58,7 +58,10 @@ public class AccountManagementService {
                     .orElseThrow(() -> new AccountNotFoundException("Данный счет не найден в системе"));
             account.setAccountStatus(AccountStatus.BLOCKED);
             accountRepository.save(account);
-            eventHelper.saveOutboxEvent(account.getUserId(), OutboxEventType.BLOCKED_ACCOUNT_EVENT);
+            eventHelper.saveOutboxEvent(
+                    account.getUserId(),
+                    OutboxEventType.BLOCKED_ACCOUNT_EVENT,
+                    accountNumber);
         } else {
             log.warn("У пользователя с ролью: {} недостаточно прав для блокировки счета", role);
             throw new BlockedAccountForbiddenException("У пользователя недостаточно прав, для блокировки счета в системе");
@@ -73,7 +76,10 @@ public class AccountManagementService {
                     .orElseThrow(() -> new AccountNotFoundException("Данный счет не найден в системе"));
             account.setAccountStatus(AccountStatus.ACTIVE);
             accountRepository.save(account);
-            eventHelper.saveOutboxEvent(account.getUserId(), OutboxEventType.UNBLOCKED_ACCOUNT_EVENT);
+            eventHelper.saveOutboxEvent(
+                    account.getUserId(),
+                    OutboxEventType.UNBLOCKED_ACCOUNT_EVENT,
+                    accountNumber);
         } else {
             log.warn("У пользователя с ролью: {} недостаточно прав для разблокировки счета", role);
             throw new UnblockedAccountForbiddenException("У пользователя недостаточно прав, для снятия блокировки в системе");
@@ -87,7 +93,10 @@ public class AccountManagementService {
             Account account = accountRepository.findByAccountNumber(accountNumber)
                     .orElseThrow(() -> new AccountNotFoundException("Данный счет не найден в системе"));
             accountRepository.delete(account);
-            eventHelper.saveOutboxEvent(account.getUserId(), OutboxEventType.CLOSE_ACCOUNT_EVENT);
+            eventHelper.saveOutboxEvent(
+                    account.getUserId(),
+                    OutboxEventType.CLOSE_ACCOUNT_EVENT,
+                    accountNumber);
         } else {
             log.warn("У пользователя с ролью: {} недостаточно прав для закрытия счета", role);
             throw new ClosedAccountForbiddenException("У пользователя недостаточно прав, чтобы закрыть счет");

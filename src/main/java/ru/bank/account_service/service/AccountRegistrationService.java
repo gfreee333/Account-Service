@@ -50,10 +50,11 @@ public class AccountRegistrationService {
             Account account = accountMapper.registrationToEntity(request);
             account.setAccountNumber(AccountNumberGenerated.generatedAccountNumber());
             account.setUserId(targetId);
-            accountRepository.save(account);
+            Account accountResult = accountRepository.save(account);
             OutboxEvent event = OutboxEvent.eventGenerated(
-                    OutboxEventType.ACCOUNT_REGISTRATION_EVENT
-                    ,userInformation);
+                    OutboxEventType.ACCOUNT_REGISTRATION_EVENT,
+                    userInformation,
+                    accountResult.getAccountNumber());
             eventStore.save(event, targetId);
             return new RegistrationResponseDto("Успешная регистрация счета для пользователя: " + targetId);
         } catch (FeignException.NotFound ex){
