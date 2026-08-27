@@ -34,7 +34,7 @@ public class AccountController {
     }
 
     // todo 2: Получение информации о своих счетах
-    @GetMapping("/accounts")
+    @GetMapping
     public ResponseEntity<List<AccountInformation>> getMyAccountsInfo(
             @RequestHeader("X-User-Id") UUID userId
     ){
@@ -43,7 +43,7 @@ public class AccountController {
     }
 
     // todo 3: Получение информации о своих счетах с конкретным типом счета
-    @GetMapping("/accounts/type")
+    @GetMapping("/type")
     public ResponseEntity<List<AccountInformation>> getMyCertainAccountsInfo(
             @RequestHeader("X-User-Id") UUID userId,
             @RequestParam AccountType accountType
@@ -55,9 +55,10 @@ public class AccountController {
     // todo 4: Получение информации о счете по accountNumber
     @GetMapping("/accountNumber")
     public ResponseEntity<AccountInformation> getCurrentAccountInfo(
-            @RequestParam String accountNumber
+            @RequestParam String accountNumber,
+            @RequestHeader("X-User-Id") UUID userId
     ){
-        return ResponseEntity.ok().body(managementService.getCurrentAccountInfo(accountNumber));
+        return ResponseEntity.ok().body(managementService.getCurrentAccountInfo(accountNumber, userId));
     }
 
     // todo 5: Блокировка конкретного счета в системе по номеру счета

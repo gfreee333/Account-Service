@@ -44,7 +44,7 @@ public class AccountRegistrationService {
         }
         try {
             UserInformation userInformation = authServiceClient.getUserById(targetId);
-            if(userInformation.getUserStatus().isBlocked()){
+            if(userInformation.getStatus().isBlocked()){
                 throw new UserBlockedInSystemException("Запрет на регистрацию счета, для заблокированного пользователя");
             }
             Account account = accountMapper.registrationToEntity(request);

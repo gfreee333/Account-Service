@@ -15,14 +15,8 @@ public interface AccountMapper {
     @Mapping(target = "accountStatus", ignore = true)
     @Mapping(target = "balance", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
-    @Mapping(target = "updateAt", ignore = true)
+    @Mapping(target = "updatedAt", ignore = true)
     Account registrationToEntity(RegistrationRequestDto request);
 
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "userId", ignore = true)
-    @Mapping(target = "dailyLimit", ignore = true)
-    @Mapping(target = "createdAt", ignore = true)
-    @Mapping(target = "updateAt", ignore = true)
     AccountInformation toAccountInformation(Account account);
-
 }

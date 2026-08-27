@@ -8,6 +8,6 @@ import java.util.UUID;
 @Data
 public class UserInformation {
     private UUID userId;
-    private UserStatus userStatus;
+    private UserStatus status;
     private String email;
 }

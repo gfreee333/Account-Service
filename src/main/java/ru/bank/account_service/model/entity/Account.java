@@ -34,7 +34,7 @@ public class Account {
     @Enumerated(EnumType.STRING)
     @Builder.Default
     private AccountStatus accountStatus = AccountStatus.ACTIVE;
-    @NotNull
+    @Builder.Default
     private BigDecimal balance = BigDecimal.ZERO;
     private BigDecimal dailyLimit;
     private BigDecimal creditLimit;

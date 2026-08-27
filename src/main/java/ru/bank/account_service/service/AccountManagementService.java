@@ -44,9 +44,13 @@ public class AccountManagementService {
     }
 
     // todo 3: Получение информации о своем конкретном счете
-    public AccountInformation getCurrentAccountInfo(String accountNumber) {
+    public AccountInformation getCurrentAccountInfo(String accountNumber, UUID userId) {
         Account account = accountRepository.findByAccountNumber(accountNumber)
                 .orElseThrow(() -> new AccountNotFoundException("Данный счет не найден в системе"));
+        if(!account.getUserId().equals(userId)){
+            log.warn("Попытка получить информацию о чужом счете");
+            throw new AlienAccountForbiddenException("Невозможно получить информацию о чужом счете"); //
+        }
         return accountMapper.toAccountInformation(account);
     }
 
