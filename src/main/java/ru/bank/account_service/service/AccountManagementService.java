@@ -5,16 +5,17 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.bank.account_service.exception.custom.*;
-import ru.bank.account_service.infrastructure.kafka.OutboxEventHelper;
+import ru.bank.account_service.infrastructure.kafka.notification.NotificationOutboxEventHelper;
 import ru.bank.account_service.infrastructure.mapper.AccountMapper;
 import ru.bank.account_service.model.dto.response.AccountInformation;
 import ru.bank.account_service.model.entity.Account;
 import ru.bank.account_service.model.enums.AccountStatus;
 import ru.bank.account_service.model.enums.AccountType;
-import ru.bank.account_service.model.enums.OutboxEventType;
-import ru.bank.account_service.model.enums.Role;
+import ru.bank.account_service.model.enums.notification.NotificationOutboxEventType;
+import ru.bank.account_service.model.enums.auth.Role;
 import ru.bank.account_service.repository.AccountRepository;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
@@ -25,7 +26,25 @@ public class AccountManagementService {
 
     private final AccountRepository accountRepository;
     private final AccountMapper accountMapper;
-    private final OutboxEventHelper eventHelper;
+    private final NotificationOutboxEventHelper eventHelper;
+
+    // todo: Проверка, существует ли указанный счет в системе
+    public boolean existsAccount(String accountNumber){
+        return accountRepository.existsByAccountNumber(accountNumber);
+    }
+
+    // todo: Получение баланса пользователя
+    public BigDecimal getBalance(String accountNumber){
+        return accountRepository.findBalanceByAccountNumber(accountNumber)
+                .orElseThrow(() -> new AccountNotFoundException("Не удалось найти нужный счет для извлечения баланса"));
+    }
+
+    // todo: Получение информации о конкретном account через accountNumber, без проверки на принадлежность
+    public UUID getUserIdFromAccount(String accountNumber){
+        return accountRepository.findUserIdByAccountNumber(accountNumber)
+                .orElseThrow(() -> new AccountNotFoundException("Не удалось найти нужный счет для извлечения userId"));
+    }
+
 
     // todo 1: Получение информации о своих счетах
     public List<AccountInformation> getMyAccountsInfo(UUID userId) {
@@ -64,7 +83,7 @@ public class AccountManagementService {
             accountRepository.save(account);
             eventHelper.saveOutboxEvent(
                     account.getUserId(),
-                    OutboxEventType.BLOCKED_ACCOUNT_EVENT,
+                    NotificationOutboxEventType.BLOCKED_ACCOUNT_EVENT,
                     accountNumber);
         } else {
             log.warn("У пользователя с ролью: {} недостаточно прав для блокировки счета", role);
@@ -82,7 +101,7 @@ public class AccountManagementService {
             accountRepository.save(account);
             eventHelper.saveOutboxEvent(
                     account.getUserId(),
-                    OutboxEventType.UNBLOCKED_ACCOUNT_EVENT,
+                    NotificationOutboxEventType.UNBLOCKED_ACCOUNT_EVENT,
                     accountNumber);
         } else {
             log.warn("У пользователя с ролью: {} недостаточно прав для разблокировки счета", role);
@@ -99,7 +118,7 @@ public class AccountManagementService {
             accountRepository.delete(account);
             eventHelper.saveOutboxEvent(
                     account.getUserId(),
-                    OutboxEventType.CLOSE_ACCOUNT_EVENT,
+                    NotificationOutboxEventType.CLOSE_ACCOUNT_EVENT,
                     accountNumber);
         } else {
             log.warn("У пользователя с ролью: {} недостаточно прав для закрытия счета", role);

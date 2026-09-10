@@ -1,4 +1,4 @@
-package ru.bank.account_service.infrastructure.kafka;
+package ru.bank.account_service.infrastructure.kafka.notification;
 
 import feign.FeignException;
 import lombok.RequiredArgsConstructor;
@@ -8,7 +8,7 @@ import ru.bank.account_service.exception.custom.ServiceUnavailableException;
 import ru.bank.account_service.exception.custom.UserNotFoundException;
 import ru.bank.account_service.infrastructure.feign.AuthServiceFeignClient;
 import ru.bank.account_service.infrastructure.feign.UserInformation;
-import ru.bank.account_service.model.enums.OutboxEventType;
+import ru.bank.account_service.model.enums.notification.NotificationOutboxEventType;
 import ru.bank.outbox_library.store.OutboxEventStore;
 
 import java.util.UUID;
@@ -16,15 +16,15 @@ import java.util.UUID;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class OutboxEventHelper {
+public class NotificationOutboxEventHelper {
 
     private final AuthServiceFeignClient authServiceClient;
     private final OutboxEventStore eventStore;
 
-    public void saveOutboxEvent(UUID targetId, OutboxEventType type, String accountNumber){
+    public void saveOutboxEvent(UUID targetId, NotificationOutboxEventType type, String accountNumber){
         try {
             UserInformation information = authServiceClient.getUserById(targetId);
-            OutboxEvent event = OutboxEvent.eventGenerated(type, information, accountNumber);
+            NotificationOutboxEvent event = NotificationOutboxEvent.eventGenerated(type, information, accountNumber);
             eventStore.save(event, targetId);
         } catch (FeignException.NotFound ex) {
             log.warn("Пользователь с данным id: {} не найден", targetId);

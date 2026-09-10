@@ -1,7 +1,7 @@
 package ru.bank.account_service.infrastructure.feign;
 
 import lombok.Data;
-import ru.bank.account_service.model.enums.UserStatus;
+import ru.bank.account_service.model.enums.auth.UserStatus;
 
 import java.util.UUID;
 

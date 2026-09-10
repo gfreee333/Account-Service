@@ -1,4 +1,4 @@
-package ru.bank.account_service.model.enums;
+package ru.bank.account_service.model.enums.auth;
 
 public enum Role {
     USER, MANAGER, ADMIN;

@@ -11,13 +11,13 @@ import ru.bank.account_service.exception.custom.UserBlockedInSystemException;
 import ru.bank.account_service.exception.custom.UserNotFoundException;
 import ru.bank.account_service.infrastructure.feign.AuthServiceFeignClient;
 import ru.bank.account_service.infrastructure.feign.UserInformation;
-import ru.bank.account_service.infrastructure.kafka.OutboxEvent;
+import ru.bank.account_service.infrastructure.kafka.notification.NotificationOutboxEvent;
 import ru.bank.account_service.infrastructure.mapper.AccountMapper;
 import ru.bank.account_service.model.dto.request.RegistrationRequestDto;
 import ru.bank.account_service.model.dto.response.RegistrationResponseDto;
 import ru.bank.account_service.model.entity.Account;
-import ru.bank.account_service.model.enums.OutboxEventType;
-import ru.bank.account_service.model.enums.Role;
+import ru.bank.account_service.model.enums.notification.NotificationOutboxEventType;
+import ru.bank.account_service.model.enums.auth.Role;
 import ru.bank.account_service.repository.AccountRepository;
 import ru.bank.account_service.infrastructure.util.AccountNumberGenerated;
 import ru.bank.outbox_library.store.OutboxEventStore;
@@ -51,8 +51,8 @@ public class AccountRegistrationService {
             account.setAccountNumber(AccountNumberGenerated.generatedAccountNumber());
             account.setUserId(targetId);
             Account accountResult = accountRepository.save(account);
-            OutboxEvent event = OutboxEvent.eventGenerated(
-                    OutboxEventType.ACCOUNT_REGISTRATION_EVENT,
+            NotificationOutboxEvent event = NotificationOutboxEvent.eventGenerated(
+                    NotificationOutboxEventType.ACCOUNT_REGISTRATION_EVENT,
                     userInformation,
                     accountResult.getAccountNumber());
             eventStore.save(event, targetId);

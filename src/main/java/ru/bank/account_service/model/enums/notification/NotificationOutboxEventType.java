@@ -1,9 +1,9 @@
-package ru.bank.account_service.model.enums;
+package ru.bank.account_service.model.enums.notification;
 
 import lombok.Getter;
 
 @Getter
-public enum OutboxEventType {
+public enum NotificationOutboxEventType {
     ACCOUNT_REGISTRATION_EVENT("account-registration-topic"),
     CLOSE_ACCOUNT_EVENT("account-close-topic"),
     BLOCKED_ACCOUNT_EVENT("account-blocked-topic"),
@@ -11,7 +11,7 @@ public enum OutboxEventType {
 
     private final String topic;
 
-    OutboxEventType(String topic){
+    NotificationOutboxEventType(String topic){
         this.topic = topic;
     }
 

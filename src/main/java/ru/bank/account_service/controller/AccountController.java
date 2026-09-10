@@ -8,7 +8,7 @@ import ru.bank.account_service.model.dto.request.RegistrationRequestDto;
 import ru.bank.account_service.model.dto.response.AccountInformation;
 import ru.bank.account_service.model.dto.response.RegistrationResponseDto;
 import ru.bank.account_service.model.enums.AccountType;
-import ru.bank.account_service.model.enums.Role;
+import ru.bank.account_service.model.enums.auth.Role;
 import ru.bank.account_service.service.AccountManagementService;
 import ru.bank.account_service.service.AccountRegistrationService;
 
